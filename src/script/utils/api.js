@@ -46,9 +46,9 @@ export const getArchivedNotes = async () => {
   }
 };
 
-export const getSingleNote = async () => {
+export const getSingleNote = async (id) => {
   try {
-    const response = await fetch(`${BASE_URL}/notes/:id`);
+    const response = await fetch(`${BASE_URL}/notes/${id}`);
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }

@@ -1,9 +1,10 @@
-import './loading.js';
-import { getNotes } from "../utils/api.js";
+import "./loading.js";
+import { getNotes, getSingleNote } from "../utils/api.js";
+import "./detailNote.js";
 
-const loadingElement = document.querySelector('loading-app');
-
-
+const detailNote = document.querySelector("detail-note");
+const moreIcon = "./src/assets/more.png";
+const loadingElement = document.querySelector("loading-app");
 
 class NoteListFetch extends HTMLElement {
   constructor() {
@@ -25,12 +26,12 @@ class NoteListFetch extends HTMLElement {
         gap: 10px;
         width: 100%;
         max-width: 1250px;
-        
       }
 
       .note-card {
         width: auto;
-        height: 200px;
+        height: auto;
+        min-height: 200px;
         border-radius: 10px;
         background: rgba(255, 255, 255, 0.2); 
         backdrop-filter: blur(10px); 
@@ -47,47 +48,66 @@ class NoteListFetch extends HTMLElement {
         margin: 0px 0px;
         opacity: 0.5;
       }
-
       p{
         opacity: 70%;
       }
       .note-card:hover {
-        transform: scale(1.02); 
         background: rgba(255, 255, 255, 0.3); 
         box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2); 
         
+      }
+
+      .detail {
+        background: linear-gradient(to right, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.11));
+        color: white; 
+        border: none; 
+        cursor: pointer; /* Change cursor to pointer on hover */
+        border-radius: 3px; /* Rounded corners */
+        transition: all 0.3s ease-in-out; 
+      }
+
+      .detail:hover {
+        background: linear-gradient(to right,rgba(50, 22, 206, 0.32), rgba(195, 75, 255, 0.24));
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
       }
     `;
   }
 
   async render() {
     this.updateStyle();
-    this.shadowRoot.innerHTML = ""; 
+    this.shadowRoot.innerHTML = "";
     this.shadowRoot.appendChild(this._style);
 
-    if (loadingElement) loadingElement.style.display = 'block'; // Show loading
+    if (loadingElement) loadingElement.style.display = "block"; // Show loading
 
     try {
-
       const data = await getNotes();
-      const notes = data.data || []; // Adjust based on your API response structure
+      const notes = data.data || [];
 
       notes.forEach((note) => {
         const noteCard = document.createElement("div");
         noteCard.classList.add("note-card");
         noteCard.innerHTML = `
+          <button class="detail" type="button"><img src="${moreIcon}" alt="More options"></button>
           <h2>${note.title}</h2>
           <hr>
           <p>${note.body}</p>
         `;
         this.shadowRoot.appendChild(noteCard);
+        const button = noteCard.querySelector(".detail");
+        button.addEventListener("click", async () => {
+          // Fetch single note by id
+          const detailData = await getSingleNote(note.id);
+          // Show detail in the overlay
+          detailNote.show(detailData.data); // We'll add a show() method to detailNote
+        });
       });
     } catch (error) {
       const errorMsg = document.createElement("div");
       errorMsg.textContent = "Failed to load notes.";
       this.shadowRoot.appendChild(errorMsg);
     } finally {
-      if (loadingElement) loadingElement.style.display = 'none'; // Hide loading
+      if (loadingElement) loadingElement.style.display = "none"; // Hide loading
     }
   }
 }

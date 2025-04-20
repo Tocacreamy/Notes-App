@@ -1,5 +1,4 @@
-import { getNotes, saveNotes } from "../utils/localStorage.js";
-
+import { createNote } from "../utils/api.js";
 class AddNoteForm extends HTMLElement {
   constructor() {
     super();
@@ -29,7 +28,7 @@ class AddNoteForm extends HTMLElement {
       noteInput.style.border = "none";
     });
 
-    form.addEventListener("submit", (event) => {
+    form.addEventListener("submit", async (event) => {
       event.preventDefault();
 
       const title = titleInput.value.trim();
@@ -57,23 +56,16 @@ class AddNoteForm extends HTMLElement {
 
       if (!isValid) return;
 
-      const notes = getNotes();
-      const newNote = {
-        id: `notes-${Math.random().toString(36).substr(2, 9)}`,
-        title,
-        body,
-        createdAt: new Date().toISOString(),
-        archived: false,
-      };
-
-      notes.unshift(newNote); // Tambahkan catatan baru di awal array
-      saveNotes(notes);
-
-      titleInput.value = "";
-      noteInput.value = "";
-
-      alert("Catatan berhasil ditambahkan!");
-      this.dispatchEvent(new CustomEvent("note-added", { bubbles: true }));
+      // Create note via API
+      try {
+        await createNote({ title, body });
+        titleInput.value = "";
+        noteInput.value = "";
+        alert("Catatan berhasil ditambahkan!");
+        this.dispatchEvent(new CustomEvent("note-added", { bubbles: true }));
+      } catch (error) {
+        alert("Gagal menambahkan catatan. Silakan coba lagi.");
+      }
     });
   }
 
