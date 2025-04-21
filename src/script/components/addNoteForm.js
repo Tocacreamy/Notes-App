@@ -4,7 +4,7 @@ class AddNoteForm extends HTMLElement {
     super();
     this.attachShadow({ mode: "open" });
   }
-
+  
   connectedCallback() {
     this.render();
     this.addEventListeners();

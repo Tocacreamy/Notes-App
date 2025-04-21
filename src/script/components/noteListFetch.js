@@ -1,9 +1,8 @@
 import "./loading.js";
-import { getNotes, getSingleNote } from "../utils/api.js";
+import { getNotes, getSingleNote, deleteNote } from "../utils/api.js";
 import "./detailNote.js";
 
 const detailNote = document.querySelector("detail-note");
-const moreIcon = "./src/assets/more.png";
 const loadingElement = document.querySelector("loading-app");
 
 class NoteListFetch extends HTMLElement {
@@ -11,11 +10,13 @@ class NoteListFetch extends HTMLElement {
     super();
     this.attachShadow({ mode: "open" });
     this._style = document.createElement("style");
+    this.showArchive = false;
   }
 
   connectedCallback() {
     this.render();
     document.addEventListener("note-added", () => this.render());
+
   }
 
   updateStyle() {
@@ -39,6 +40,9 @@ class NoteListFetch extends HTMLElement {
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         color: white;
         transition: all 0.3s ease-in-out;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
       }
 
       hr{
@@ -54,21 +58,27 @@ class NoteListFetch extends HTMLElement {
       .note-card:hover {
         background: rgba(255, 255, 255, 0.3); 
         box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2); 
-        
       }
 
-      .detail {
+      button {
         background: linear-gradient(to right, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.11));
         color: white; 
         border: none; 
         cursor: pointer; /* Change cursor to pointer on hover */
         border-radius: 3px; /* Rounded corners */
         transition: all 0.3s ease-in-out; 
+        height: 40px;
       }
 
-      .detail:hover {
-        background: linear-gradient(to right,rgba(50, 22, 206, 0.32), rgba(195, 75, 255, 0.24));
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
+      .detail {
+        background: linear-gradient(to right, rgba(0, 174, 255, 0.2), rgba(0, 106, 255, 0.3));
+      }
+      .delete {
+        background: linear-gradient(to right, rgba(255, 0, 0, 0.2), rgba(255, 0, 0, 0.3));
+      }
+
+      button:hover {
+        transform: scale(1.05); /* Slightly enlarge the button on hover */
       }
     `;
   }
@@ -78,9 +88,11 @@ class NoteListFetch extends HTMLElement {
     this.shadowRoot.innerHTML = "";
     this.shadowRoot.appendChild(this._style);
 
-    if (loadingElement) loadingElement.style.display = "block"; // Show loading
+
+    if (loadingElement) loadingElement.style.display = "block"; 
 
     try {
+
       const data = await getNotes();
       const notes = data.data || [];
 
@@ -88,18 +100,29 @@ class NoteListFetch extends HTMLElement {
         const noteCard = document.createElement("div");
         noteCard.classList.add("note-card");
         noteCard.innerHTML = `
-          <button class="detail" type="button"><img src="${moreIcon}" alt="More options"></button>
-          <h2>${note.title}</h2>
-          <hr>
-          <p>${note.body}</p>
+          <div>
+            <h2>${note.title}</h2>
+            <hr>
+            <p>${note.body}</p>
+          </div>
+          <div>
+            <button class="detail" type="button">Detail</button>
+            <button class="delete" type="button">Hapus</button>
+          </div>
         `;
         this.shadowRoot.appendChild(noteCard);
-        const button = noteCard.querySelector(".detail");
-        button.addEventListener("click", async () => {
-          // Fetch single note by id
+        const detailButton = noteCard.querySelector(".detail");
+        const deleteButton = noteCard.querySelector(".delete");
+
+        deleteButton.addEventListener("click", async () => {
+          await deleteNote(note.id);
+          alert("Catatan berhasil dihapus!");
+          this.render();
+        });
+
+        detailButton.addEventListener("click", async () => {
           const detailData = await getSingleNote(note.id);
-          // Show detail in the overlay
-          detailNote.show(detailData.data); // We'll add a show() method to detailNote
+          detailNote.show(detailData.data); 
         });
       });
     } catch (error) {

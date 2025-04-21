@@ -100,9 +100,9 @@ export const unarchiveNote = async (params) => {
   }
 };
 
-export const deleteNote = async (params) => {
+export const deleteNote = async (id) => {
   try {
-    const response = await fetch(`${BASE_URL}/notes/${params.id}`, {
+    const response = await fetch(`${BASE_URL}/notes/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

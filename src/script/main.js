@@ -1,3 +1,4 @@
+import '../styles/style.css';
 import "./components/appBar.js";
 import "./components/addNoteForm.js";
 import "./components/appFooter.js";
