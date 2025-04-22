@@ -93,7 +93,7 @@ class DetailNote extends HTMLElement {
           <p>${this.note.body}</p>
           <hr>
           <small>Dibuat: ${new Date(
-            this.note.createdAt
+            this.note.createdAt,
           ).toLocaleString()}</small>
 
         `

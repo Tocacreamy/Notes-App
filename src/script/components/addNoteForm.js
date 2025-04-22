@@ -61,10 +61,11 @@ class AddNoteForm extends HTMLElement {
         await createNote({ title, body });
         titleInput.value = "";
         noteInput.value = "";
-        alert("Catatan berhasil ditambahkan!");
+        document.querySelector("custom-alert").show("Catatan berhasil ditambahkan!", "success");
         this.dispatchEvent(new CustomEvent("note-added", { bubbles: true }));
       } catch (error) {
-        alert("Gagal menambahkan catatan. Silakan coba lagi.");
+        console.error("Error creating note:", error);
+        document.querySelector("custom-alert").show("Gagal menambahkan catatan!", "error");
       }
     });
   }

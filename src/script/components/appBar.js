@@ -1,7 +1,7 @@
 class AppBar extends HTMLElement {
   constructor() {
     super();
-    this.attachShadow({ mode: "open" }); 
+    this.attachShadow({ mode: "open" });
   }
 
   connectedCallback() {

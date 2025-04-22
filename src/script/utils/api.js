@@ -60,15 +60,15 @@ export const getSingleNote = async (id) => {
   }
 };
 
-export const archiveNote = async (params) => {
+export const archiveNote = async (id) => {
   try {
-    const response = await fetch(`${BASE_URL}/notes/${params.id}/archive`, {
+    const response = await fetch(`${BASE_URL}/notes/${id}/archive`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        archived: params.archived,
+        archived: true,
       }),
     });
     if (!response.ok) {
