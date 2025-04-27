@@ -4,7 +4,7 @@ class AddNoteForm extends HTMLElement {
     super();
     this.attachShadow({ mode: "open" });
   }
-  
+
   connectedCallback() {
     this.render();
     this.addEventListeners();
@@ -56,16 +56,26 @@ class AddNoteForm extends HTMLElement {
 
       if (!isValid) return;
 
-      // Create note via API
+      // Tampilkan loading
+      const loading = document.querySelector("loading-app");
+      if (loading) loading.style.display = "block";
+
       try {
         await createNote({ title, body });
         titleInput.value = "";
         noteInput.value = "";
-        document.querySelector("custom-alert").show("Catatan berhasil ditambahkan!", "success");
+        document
+          .querySelector("custom-alert")
+          .show("Catatan berhasil ditambahkan!", "success");
         this.dispatchEvent(new CustomEvent("note-added", { bubbles: true }));
       } catch (error) {
         console.error("Error creating note:", error);
-        document.querySelector("custom-alert").show("Gagal menambahkan catatan!", "error");
+        document
+          .querySelector("custom-alert")
+          .show("Gagal menambahkan catatan!", "error");
+      } finally {
+        // Sembunyikan loading
+        if (loading) loading.style.display = "none";
       }
     });
   }

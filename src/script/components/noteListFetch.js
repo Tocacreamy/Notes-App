@@ -162,15 +162,31 @@ class NoteListFetch extends HTMLElement {
         const archiveButton = noteCard.querySelector(".archive");
 
         deleteButton.addEventListener("click", async () => {
-          await deleteNote(note.id);
-          document.querySelector("custom-alert").show("Catatan berhasil dihapus!", "success");
-          this.render();
+          const loading = document.querySelector("loading-app");
+          if (loading) loading.style.display = "block";
+          try {
+            await deleteNote(note.id);
+            document
+              .querySelector("custom-alert")
+              .show("Catatan berhasil dihapus!", "success");
+            this.render();
+          } finally {
+            if (loading) loading.style.display = "none";
+          }
         });
 
         archiveButton.addEventListener("click", async () => {
-          await archiveNote(note.id);
-          document.querySelector("custom-alert").show("Catatan berhasil diarsipkan!", "success");
-          this.render();
+          const loading = document.querySelector("loading-app");
+          if (loading) loading.style.display = "block";
+          try {
+            await archiveNote(note.id);
+            document
+              .querySelector("custom-alert")
+              .show("Catatan berhasil diarsipkan!", "success");
+            this.render();
+          } finally {
+            if (loading) loading.style.display = "none";
+          }
         });
 
         detailButton.addEventListener("click", async () => {
@@ -211,15 +227,31 @@ class NoteListFetch extends HTMLElement {
         const archiveButton = noteCard.querySelector(".archive");
 
         deleteButton.addEventListener("click", async () => {
-          await deleteNote(note.id);
-          document.querySelector("custom-alert").show("Catatan berhasil dihapus!", "success");
-          this.render();
+          const loading = document.querySelector("loading-app");
+          if (loading) loading.style.display = "block";
+          try {
+            await deleteNote(note.id);
+            document
+              .querySelector("custom-alert")
+              .show("Catatan berhasil dihapus!", "success");
+            this.render();
+          } finally {
+            if (loading) loading.style.display = "none";
+          }
         });
 
         archiveButton.addEventListener("click", async () => {
-          await unarchiveNote({ id: note.id, archived: false });
-          document.querySelector("custom-alert").show("Catatan berhasil dipulihkan!", "success");
-          this.render();
+          const loading = document.querySelector("loading-app");
+          if (loading) loading.style.display = "block";
+          try {
+            await unarchiveNote({ id: note.id, archived: false });
+            document
+              .querySelector("custom-alert")
+              .show("Catatan berhasil dipulihkan!", "success");
+            this.render();
+          } finally {
+            if (loading) loading.style.display = "none";
+          }
         });
 
         detailButton.addEventListener("click", async () => {
